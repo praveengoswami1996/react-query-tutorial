@@ -1,0 +1,109 @@
+1. What is React Query?
+_______________________
+Answer => It is a library for fetching data in a React Application.
+
+2. Why we need React Query?
+___________________________
+Answer => (i) Since React is a UI Library, there is no specific pattern for data fetching.
+
+(ii) What we typically do, we use "useEffect" hook for data fetching and "useState" hook to maintain component state like loading, error or resulting data.
+
+(iii) And if the data is needed throughout the app, we tend to use State Management Libraries such as Redux.
+
+(iv) But, most of the state management libraries are good for working with client site.
+For example, to manage 'theme' for the application / Whether a modal is open
+
+(v) State management libraries are not great for working with asynchronous or server state.
+
+(vi) And this is why server state is very different from client state.
+
+
+3. Client State vs Server State
+________________________________
+
+CLIENT STATE:
+-------------
+(i) Client State is persisted in your app memory and accessing or updating it is synchronous.
+
+SERVER STATE:
+-------------
+(i) Server state is persisted remotely and requires asynchronous APIs for fetching or updating.
+(ii) Unlike Client State, Server state has shared ownership.
+(iii) Data can be updated by someone else without your knowledge. Therefore, UI data may not be in sync with the remote data.
+(iv) It becomes even more challenging when you have to deal with caching, deduping multiple requests for the same data, updating stale data in the background, performance optimization (when it comes to pagination and lazy loading) etc.
+
+4. How to setup react-query in our project?
+___________________________________________
+
+Step 1: Install react-query package (npm install react-query OR yarn add react-query)
+
+Step 2: We need to add react-query to our application, so at the top of our component tree we need to add the React Query Provider and provide the client to our application. Import QueryClientProvider and QueryClient from react-query.
+
+For example:
+
+function App() {8
+  return (
+    <QueryClientProvider>
+      <Router>
+        <div>
+          <nav>
+            <ul>
+              <li>
+                <Link to="/">Home</Link>
+              </li>
+              <li>
+                <Link to="/super-heroes">Traditional Super Heroes</Link>
+              </li>
+              <li>
+                <Link to="/rq-super-heroes">RQ Super Heroes</Link>
+              </li>
+            </ul>
+          </nav>
+          <Routes>
+            <Route path="/super-heroes" element={<SuperHeroesPage />} />
+            <Route path="/rq-super-heroes" element={<RQSuperHeroesPage />} />
+            <Route path="/" element={<HomePage />} />
+          </Routes>
+        </div>
+      </Router>
+    </QueryClientProvider>
+  )
+}
+
+Step 3: Create an instance of the Query Client
+
+    For example: const queryClient = new QueryClient();
+
+Step 4: Pass this instance as 'client' prop into the QueryClientProvider
+
+    For Example: 
+
+    <QueryClientProvider client={queryClient}>
+      ...
+    </QueryClientProvider>
+
+Step 5: That's pretty much is our react-query setup, we have now access to every hook and method that react query provides.
+
+
+5. How to run a basic query and fetch data from server?
+_______________________________________________________
+
+Step 1: import { useQuery } from "react-query";
+(useQuery hook is the hook we are going to be use for all of our data fetching needs)
+
+Step 2: Call the useQuery hook into your component in which you want to fetch the data. 
+
+useQuery hook requires at least 2 arguments:
+(i) the first argument is "A Unique Key" to identify this query
+(ii) the second argument is a function that returns a promise
+
+  For Example :
+
+    const { isLoading, data } = useQuery("super-heroes", () => {
+      return axios.get('http://localhost:4000/superheroes');
+    })
+
+
+6. Handling Query Errors (How to handle errors when fetching data) ?
+____________________________________________________________________
+

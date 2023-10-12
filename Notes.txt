@@ -107,3 +107,180 @@ useQuery hook requires at least 2 arguments:
 6. Handling Query Errors (How to handle errors when fetching data) ?
 ____________________________________________________________________
 
+Example: 
+  const { isLoading, data, isError, error } = useQuery("super-heroes", fetchSuperHeroes)
+
+In JSX:
+    if (isError) {
+      return <h2>{error.message}</h2>
+    }
+
+7. What is Query Cache?
+_____________________________________________________________________
+
+Let us understand "Query Cache" with the help of examples:
+
+Case 1:
+
+As we know, we have used traditional way (using useEffect Hook) of data fetching in "Traditional Super Heroes" page, so everytime you visit this page it first shows a "Loading..." text and then it shows the list of SuperHeroes. That means, each time we visit this page, data is fetched. So if we visit the "Traditional Super Heroes" page 10 times, the data will also be fetched 10 times. So we will always see a "Loading..." text first on visiting this page.
+
+Case 2:
+
+Now as we know, we have used the React Query for data fetching in "RQ Super Heroes" Page.
+So if we navigate to the "RQ Super Heroes" page for the very first time, it first shows a "Loading..." text and then it shows the list of Super Heroes.
+
+However, if we go back on some other page and then navigate back to the "RQ Super Heroes" page then we don't see "Loading..." text instead we directly see the list of super heroes. And this is because of the "Query Cache" that react-query provides.
+
+By default, every query result is cached for 5 minutes and react-query relies on that cache for subsequent requests.
+
+
+Let us understand in a bit more detail how useQuery works with respect to caching:
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+The first time useQuery is fired for "super-heroes" key (Query Key that we provided while invoking the useQuery hook), isLoading is set to true and a network request is sent to fetch the data.
+
+When the request is completed, it is cached using the query-key (i.e. "super-heroes") and the fetchSuperHeroes function as the unique identifiers.
+
+Now when we navigate to some other page (Homepage or Traditional Super Heroes Page) and then navigate back to "RQ Super Heroes" page, React Query will check if the data for this query exists in the cache, if the data exists in the cache it is immediately returned without isLoading set to true.
+
+And this is why we don't see the "Loading..." text for the subsequent requests.
+
+However, the React Query knows that the server data might have updated and the cache might not contain the latest data, so a "background refetch" is triggered for the same query and if the fetch is successful, new data is updated in the UI.
+
+And if the refetched data is same as the cached data, you will not notice any change in the UI.
+
+"""You might be wondering if "isLoading" is not changed while refetching the data, does useQuery provides any other boolean flag to indicate background refetching of the query?
+
+So, useQuery provides "isFetching" boolean flag to indicate the background refetching.
+
+How can we modify the default cache Time?
++++++++++++++++++++++++++++++++++++++++++
+
+    const { isLoading, data, isError, error, isFetching } = useQuery(
+      "super-heroes", 
+      fetchSuperHeroes,
+      {
+        cacheTime: 10000, //10000 === 10 seconds
+      }      
+    )
+
+So when the query is executed for the first time, it is cached. 
+if the query is "ACTIVE" that means It has an active observer or in simple words we can say we are on the same page on which the data was fatched then it will continue to remain in cache till the time we are on that page.
+
+As soon as you leave that page that means the query is now "INACTIVE" (or doesn't have any active observer), then after the specified time (which in this case is 10 seconds) the query is garbage collected.
+
+So if you go back again on the "RQ Super Heroes" page after 10 seconds of the leaving that page then you will again see the "Loading..." text first and then the list of superheroes.
+
+
+8. What is Stale Time?
+________________________________________________________________________
+
+Another Use of Query Cache is to reduce the number of network requests for the data that does not necessarily change too often.
+
+For example, let say our list of superheroes does not change too often and it is okay if the user sees stale data for a while, in such cases we can use the cahced query results without having to refetch in the background.
+
+To achieve that behaviour, we configure another property called "staleTime".
+
+Default staleTime is 0 seconds.
+
+
+9. Refetch Defaults
+________________________________________________________________________
+
+Lets learn about two more configuration related to refetching for which react query provides a default value.
+
+(i) refetchOnMount
+------------------
+
+Case 1: 
+
+  {
+    refetchOnMount: true, //best Option
+  }
+
+By default refetchOnMount is set to true, if it is set to true the query will refetch on Mount if the data is stale. So that means everytime we visit the "RQ Superheroes Page" the query will refetch. If you go back on some other page and then navigate back to "RQ Super Heroes Page" the query will refetch. and it is also the default behaviour of react query which is similar to how traditional data fetching happens as well. Data is fetched everytime the component is mount.
+
+
+Case 2: 
+
+  {
+    refetchOnMount: false,
+  }
+
+You can choose to set "refetchOnMount" to false, in which case the query will not refetch on mount.
+So if you now go to "RQ Super Heroes" page for the very first time, you will first see the "Loading..." text and then the list of superheroes. And then if you go on some other page and come back to "RQ Super heroes" page, the query will not refetch.
+
+
+Case 3:
+
+  {
+    refetchOnMount: "always",
+  }
+
+Another possible value that you can specify is "always". So irrespective of whether the query data is stale or not, the query will always refetch the data when the component mounts.
+
+
+(ii) refetchOnWindowFocus
+-------------------------
+This option is slightly more important than refetchOnMount.
+By default, it is set to true.
+Anytime the window tab loses focus and gains focus again, a background refetch is initiated.
+
+let's understand How it Works?
+++++++++++++++++++++++++++++++
+
+Suppose you are currently at "Traditional Super Heroes Page" and now you go and change/update some data in db.json file. Now if you come back again on "Traditional Super Heroes page" you will not see the updated data until you refresh the page. Because there is no way the "Traditional Super Heroes" page will know that the remote data has changed.
+
+Now suppose you are at "RQ Super Heroes Page" and in configuration you have set "refetchOnWindowFocus" to true. Now if you go and change some data in db.json file and then come back "RQ Super Heroes Page", you will automatically see the latest updated data here. And this is because of refetchOnWindowFocus property.
+
+
+10. What is Polling? How to do Polling with react query?
+__________________________________________________________________________
+
+Polling basically refers to the process of fetching data at regular intervals.
+
+For example, if you have a component that shows the real-time price of different stocks then you might want to fetch the data every second to update the UI.
+
+This ensures the UI will always be in sync with the remote data irrespective of configurations like refetchOnMount or refetchOnWindowFocus which is dependent on user interaction.
+
+To "Poll" the data with react query, we can make use of another configuration called "refetchInterval". By default, it is set to false.
+
+However, you can set it to a number in milliseconds which will result in a continuous refetch of the query at that interval.
+
+For example, if you set it to 2000ms (i.e. 2 Seconds), the query will automatically refetch every 2 seconds.
+
+Important Note:
+---------------
+One important thing to note is that, the polling or automatic refetching is PAUSED if the window loses focus.
+
+If you do want background refetching at regular intervals then you can specify another configuration called "refetchIntervalInBackground" and set it true.
+
+This will continue to poll or refetch the data even if the window loses focus.
+
+Using "refetchInterval" and "refetchIntervalInBackground" you can poll data and provide a really good user experience in applications where the data changes every now and then.
+
+
+11. How to fetch data using useQuery on Click of a button or user event?
+_________________________________________________________________________ 
+
+Till now the useQuery hook was getting called on component mount or when we were focusing the window.
+
+However, depending on the requirement we might have to fetch the data based on a user event and not when the component mounts.
+
+Let's learn how to fetch data using useQuery on Click of a button or user event.
+
+There are two steps that we need to implement:
+
+(i) The first step is to inform useQuery not to fire the get request when the component mounts. We do that by passing in a configuration to useQuery. This configuration is called "enabled" and we will set it to false. So we disable the fetching on mount using "enabled" flag.
+
+For example:
+
+  const { isLoading, data, isError, error, isFetching } = useQuery(
+      "super-heroes", 
+      fetchSuperHeroes,
+      {
+        enabled: false,
+      }      
+  )
+
+(ii) The second step is, we fetch the data on click of a button or user event.

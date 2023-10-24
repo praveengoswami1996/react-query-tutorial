@@ -284,3 +284,150 @@ For example:
   )
 
 (ii) The second step is, we fetch the data on click of a button or user event.
+
+
+12. Success and Error Callbacks
+______________________________________________________________________________
+
+When we are dealing with data fetching, sometimes we might want to perform a sideeffect when the query completes. The sideeffect could be Opening a Modal, navigating to a different route or displaying toast notifications.
+
+To cater or handle these kind of scenarios, React Query lets us specify SUCCESS and ERROR CALLBACKS as configurations or options to the useQuery hook.
+
+Example:
+
+    const RQSuperHeroesPage = () => {
+
+      //This function will be called when the query successfully fetches data
+      const onSuccess = (data) => {
+        console.log("Perform side effect after data fetching", data)
+      }
+
+      //This function will be called when the query encounters an error while trying to fetch the data. 
+      const onError = (error) => {
+        console.log("Perform side effect after encountering error", error)
+      } 
+
+      const { isLoading, data, isError, error, isFetching, refetch } = useQuery(
+        "super-heroes", 
+        fetchSuperHeroes,
+        {
+          onSuccess: onSuccess,
+          onError: onError
+        }       
+      )
+    }
+
+Here, data (in onSuccess Callback) and error (in onError Callback) are automatically injected by the React Query. The data is the same data that has been fetched by the React Query or the error that was encountered by React Query while fetching the data.
+
+
+13. Data Transformation in React Query
+__________________________________________________________________________________
+
+If you have ever fetched data from an API before, then it is pretty sure that you've run into the scenario of needing to transform the data into a format that the front-end component can consume.
+
+The back-end folks have their own convention and the front-end might have a different convention.
+
+To help with such scenarios, react query provides a "select" configuration option which we can specify on the useQuery Hook.
+
+"select" is a function which automatically receives the api data (response) as an argument.
+
+
+14. Parallel Queries
+__________________________________________________________________________________
+
+Sometimes a single component needs to call multiple APIs to fetch the necessary data.
+
+With React Query, it is as simple as calling useQuery twice.
+
+For Example:
+
+        import { useQuery } from "react-query";
+        import axios from "axios";
+
+        const fetchSuperHeroes = () => {
+          return axios.get("http://localhost:4000/superheroes")
+        }
+
+        const fetchFriends = () => {
+          return axios.get("http://localhost:4000/friends")
+        }
+
+        const ParallelQueriesPage = () => {
+
+          const { data: superHeroes } = useQuery('super-heroes', fetchSuperHeroes);
+          const { data: friends } = useQuery('friends', fetchFriends)
+
+          return (
+            <div>ParallelQueriesPage</div>
+          )
+        }
+
+        export default ParallelQueriesPage;
+
+
+15. Dynamic Parallel Queries
+___________________________________________________________________________________
+
+The useQueries hook is a part of the React Query library and is used to execute multiple queries in parallel. This hook is especially useful when you need to fetch data from multiple endpoints or execute several dynamic queries simultaneously. It allows you to define and execute an array of queries in a single call.
+
+Example: 
+
+              import { useQueries } from "react-query";
+              import axios from "axios";
+
+              //fetches data of single superhero
+              const fetchSuperHero = (heroId) => {
+                  return axios.get(`http://localhost:4000/superheroes/${heroId}`)
+              }
+              const DynamicParallelPage = ({ heroIds }) => {
+                
+                  //useQueries returns an array of query results
+                const queryResults = useQueries(
+                  heroIds.map(id => {
+                      return {
+                          queryKey: ['super-hero', id],
+                          queryFn: () => fetchSuperHero(id)
+                      }
+                  })
+                )
+                
+                console.log({ queryResults })
+
+                return (
+                  <div>DynamicParallelPage</div>
+                )
+              }
+
+              export default DynamicParallelPage;
+
+
+16. Dependent Queries
+____________________________________________________________________________________
+
+Sometimes, we are also going to come across scenarios where we need to execute the queries sequentially that is one after the another.
+
+And the situation arises when you have a query which is dependent on the results of another query.
+
+Let's see how to address dependent queries:
+
+
+17. Mutations
+____________________________________________________________________________________
+
+Now we will understand about sending data from our application to any backend using React Query.
+
+
+18. Optimistic Updates
+____________________________________________________________________________________
+
+Optimistic updates as the name indicates imply (matlab ya arth nikalna) updating the state before performing a mutation under the assumption that nothing can go wrong. It is typically done to give an impression that your app is pleasing fast.
+
+The idea with optimistic updates is that the application will assume that the server will respond “It was a success”. You accomplished your goal. Whatever you needed me to do, I did it.”
+
+19. How to add an axios interceptor when working with react query?
+_____________________________________________________________________________________
+
+let us first clear one thing in our mind, that React Query has nothing to do with Axios Interceptor.
+
+However, when using axios for network requests, it is pretty common to have a baseURL, the beta token in the header, custom error handling etc.
+

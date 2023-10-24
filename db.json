@@ -1,19 +1,143 @@
 {
-    "superheroes": [
-        {
-            "id": 1,
-            "name": "Batman",
-            "alterEgo": "Bruce Wayne"
-        },
-        {
-            "id": 2,
-            "name": "Superman",
-            "alterEgo": "Clark Kent"
-        },
-        {
-            "id": 3,
-            "name": "Wonder Woman",
-            "alterEgo": "Princess Diana"
-        }
-    ]
+  "superheroes": [
+    {
+      "id": 1,
+      "name": "Batman",
+      "alterEgo": "Bruce Wayne"
+    },
+    {
+      "id": 2,
+      "name": "Superman",
+      "alterEgo": "Clark Kent"
+    },
+    {
+      "id": 3,
+      "name": "Wonder Woman",
+      "alterEgo": "Princess Diana"
+    },
+    {
+      "id": 4,
+      "name": "Spiderman",
+      "alterEgo": "Peter Parker"
+    },
+    {
+      "name": "The Flash",
+      "alterEgo": "Barry Allen",
+      "id": 5
+    },
+    {
+      "name": "Shaktimaan",
+      "alterEgo": "Gangadhar",
+      "id": 6
+    },
+    {
+      "name": "krishh",
+      "alterEgo": "Hritik Roshan",
+      "id": 7
+    },
+    {
+      "name": "Shazam",
+      "alterEgo": "Billy Batson",
+      "id": 8
+    },
+    {
+      "name": "Praveen Goswami ",
+      "alterEgo": "Devv",
+      "id": 9
+    },
+    {
+      "name": "Aryamann",
+      "alterEgo": "shubh",
+      "id": 10
+    },
+    {
+      "name": "Junior G",
+      "alterEgo": "Akshay",
+      "id": 11
+    },
+    {
+      "name": "Cat Woman ",
+      "alterEgo": "Sellina Kyle",
+      "id": 12
+    },
+    {
+      "name": "Bat Woman",
+      "alterEgo": "Jenerial D Silva",
+      "id": 13
+    },
+    {
+      "name": "Aquaman",
+      "alterEgo": "Mickey Arthur",
+      "id": 14
+    },
+    {
+      "name": "Aquaman",
+      "alterEgo": "Mickey Arthur",
+      "id": 15
+    }
+  ],
+  "friends": [
+    {
+      "id": 1,
+      "name": "Shaktimaan"
+    },
+    {
+      "id": 2,
+      "name": "Aryamaan"
+    },
+    {
+      "id": 3,
+      "name": "Krishh"
+    }
+  ],
+  "users": [
+    {
+      "id": "praveen@example.com",
+      "channelId": "PraveenYoutubeChannel"
+    }
+  ],
+  "channels": [
+    {
+      "id": "PraveenYoutubeChannel",
+      "courses": [
+        "react",
+        "vue",
+        "angular"
+      ]
+    }
+  ],
+  "colors": [
+    {
+      "id": 1,
+      "label": "red"
+    },
+    {
+      "id": 2,
+      "label": "blue"
+    },
+    {
+      "id": 3,
+      "label": "green"
+    },
+    {
+      "id": 4,
+      "label": "yellow"
+    },
+    {
+      "id": 5,
+      "label": "black"
+    },
+    {
+      "id": 6,
+      "label": "white"
+    },
+    {
+      "id": 7,
+      "label": "orange"
+    },
+    {
+      "id": 8,
+      "label": "purple"
+    }
+  ]
 }
